@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "expojam3",
-    "description": "An empty new project",
-    "slug": "expojam3",
+    "description": "play tic tac toe against urself",
+    "slug": "self-tic-tac-toe",
     "privacy": "public",
     "sdkVersion": "21.0.0",
     "version": "1.0.0",

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
-const GRID_LEN = 60;
+const GRID_LEN = 70;
 const WIDTH = 3;
 const HEIGHT = 3;
 const EMPTY = 0;
@@ -12,12 +12,7 @@ const EMPTY = 0;
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.reset();
-
-  }
-
-  reset (){
-    return {
+    this.state = {
       currPlayer: 1,
       animation: null,
       board: this.initBoard(),
@@ -26,7 +21,11 @@ export default class App extends React.Component {
   }
 
   resetGame(){
-    this.setState(this.reset());
+    this.setState({
+      currPlayer: 1,
+      board: this.initBoard(),
+      animationList: [],
+    });
   }
 
   initBoard(){
@@ -219,34 +218,16 @@ export default class App extends React.Component {
     }
   }
 
-  foo (){
-    return (
-        <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'white'}}>
-           {this.state.animation &&
-            <Lottie
-              ref={animation => {
-                if (animation !== null && !this.state.animationList.includes(animation)){
-                  this.state.animationList.push(animation);
-                  this._playAnimation();
-                }
-                
-              }}
-              style={{
-                width: GRID_LEN,
-                height: GRID_LEN,
-                backgroundColor: '#eee',
-              }}
-              source={this.state.animation}
-            />}
-        </View>
-      ); 
-  }
-
   renderCell(x, y){
     return (
     <TouchableOpacity key = {[x,y]} onPress={this._onPressButton([x,y])}>
-        <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'powderblue'}}>
-          {/* this.state.board[x][y] !== EMPTY && this.foo() */}
+        <View style={{
+          width: GRID_LEN, 
+          height: GRID_LEN, 
+          backgroundColor: 'powderblue',
+          borderTopWidth: 3,
+          borderBottomWidth:3,
+        }}>
           {this.state.board[x][y] !== EMPTY && this.playedGrid(this.state.board[x][y])} 
         </View >
     </TouchableOpacity>
@@ -285,7 +266,7 @@ export default class App extends React.Component {
             flexDirection: 'column',
       }}>
         <View style={{
-            flex: 0.8,
+            flex: 0.7,
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
@@ -293,11 +274,13 @@ export default class App extends React.Component {
           {this.renderGrid(WIDTH, HEIGHT).map((pillar)=>pillar)}
         </View>
         <View style={{
-          flex: 0.2,
+          flex: 0.3,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-          <Text>Your Move, Player #{this.state.currPlayer}</Text>
+          <Text style={{fontSize: 25}}>
+            Your Move, Player #{this.state.currPlayer}
+          </Text>
         </View>
       </View>
 
