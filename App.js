@@ -21,7 +21,12 @@ export default class App extends React.Component {
       currPlayer: 1,
       animation: null,
       board: this.initBoard(),
+      animationList: [],
     };
+  }
+
+  resetGame(){
+    this.setState(this.reset());
   }
 
   initBoard(){
@@ -37,7 +42,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    //this._playAnimation();
+    this._playAnimation();
   }
 
   nextTurn(coords){
@@ -46,8 +51,10 @@ export default class App extends React.Component {
     if (!this.canMove(x, y)){
       return;
     }
+
     var board = this.state.board;
     board[coords[0]][coords[1]] = this.state.currPlayer;
+
     this.setState({
       currPlayer: this.state.currPlayer === 1 ? 2 : 1,
       board,
@@ -56,10 +63,10 @@ export default class App extends React.Component {
     let winner = this.whoWon();
     if (winner !== undefined) {
       alert("Player "+ winner+" won!");
-      this.setState(this.reset());
+      this.resetGame();
     } else if (this.isDraw()){
       alert("Quin won!");
-      this.setState(this.reset());
+      this.resetGame();
     }
   }
 
@@ -168,8 +175,10 @@ export default class App extends React.Component {
     if (!this.state.animation) {
       this._loadAnimationAsync();
     } else {
-      this.animation.reset();
-      this.animation.play();
+       this.state.animationList.map((animation)=>{
+         animation.reset();
+         animation.play();
+       });
     }
   };
 
@@ -185,16 +194,60 @@ export default class App extends React.Component {
   };
 
   playedGrid (currPlayer) {
-    let color = currPlayer ===  1? 'black' : 'purple';
-    //alert(currPlayer + " " + color);
-    return <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: color}} />
+    if (currPlayer === 1){
+      return <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'black'}} />
+    } else {
+      return (
+        <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'white'}}>
+           {this.state.animation &&
+            <Lottie
+              ref={animation => {
+                if (animation !== null && !this.state.animationList.includes(animation)){
+                  this.state.animationList.push(animation);
+                  this._playAnimation();
+                }
+              }}
+              style={{
+                width: GRID_LEN,
+                height: GRID_LEN,
+                backgroundColor: '#eee',
+              }}
+              source={this.state.animation}
+            />}
+        </View>
+      ); 
+    }
+  }
+
+  foo (){
+    return (
+        <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'white'}}>
+           {this.state.animation &&
+            <Lottie
+              ref={animation => {
+                if (animation !== null && !this.state.animationList.includes(animation)){
+                  this.state.animationList.push(animation);
+                  this._playAnimation();
+                }
+                
+              }}
+              style={{
+                width: GRID_LEN,
+                height: GRID_LEN,
+                backgroundColor: '#eee',
+              }}
+              source={this.state.animation}
+            />}
+        </View>
+      ); 
   }
 
   renderCell(x, y){
     return (
     <TouchableOpacity key = {[x,y]} onPress={this._onPressButton([x,y])}>
         <View style={{width: GRID_LEN, height: GRID_LEN, backgroundColor: 'powderblue'}}>
-          {this.state.board[x][y] !== EMPTY && this.playedGrid(this.state.board[x][y])}
+          {/* this.state.board[x][y] !== EMPTY && this.foo() */}
+          {this.state.board[x][y] !== EMPTY && this.playedGrid(this.state.board[x][y])} 
         </View >
     </TouchableOpacity>
     );
